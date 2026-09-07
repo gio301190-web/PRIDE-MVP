@@ -315,9 +315,6 @@ function wallet() {
         </div>
 
         <div class="card">
-          <div class="card-label">ROLE</div>
-          <div class="big-value">${esc(role)}</div>
-        </div>
 
         <div class="card">
           <div class="card-label">STATUS</div>
