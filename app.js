@@ -305,12 +305,12 @@ function wallet() {
       <section class="grid">
 
         <div class="card">
-          <div class="card-label">PRIDE ID</div>
+          <div class="card-label">ID</div>
           <div class="big-value">${esc(prideId)}</div>
         </div>
 
         <div class="card">
-          <div class="card-label">WALLET ID</div>
+          <div class="card-label">WALLET</div>
           <div class="big-value">${esc(walletId)}</div>
         </div>
 
@@ -333,13 +333,13 @@ function wallet() {
           ? `
             <section class="card">
               <div class="eyebrow">NEXT STEP</div>
-              <h2>Стать Seller</h2>
+              <h2>Стать Player</h2>
               <p class="muted">
-                Seller получает доступ к PRIDE Player.
+                Player получает доступ к игровой системе PRIDE.
               </p>
 
               <button class="btn primary" onclick="becomeSeller()">
-                Активировать Seller
+                Активировать Player
               </button>
             </section>
           `
