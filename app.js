@@ -416,16 +416,10 @@ async function player() {
       <section class="grid">
 
         <div class="card">
-          <div class="card-label">PLAYER ID</div>
+          <div class="card-label">ID</div>
           <div class="big-value">${esc(playerId)}</div>
         </div>
 
-        <div class="card">
-          <div class="card-label">ROLE</div>
-          <div class="big-value">${esc(
-            currentProfile.role
-          )}</div>
-        </div>
 
         <div class="card">
           <div class="card-label">LEVEL</div>
