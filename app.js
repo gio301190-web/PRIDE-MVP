@@ -244,7 +244,7 @@ async function loadSession() {
   const walletResult = await supabaseClient
     .from("wallets")
     .select("*")
-    .eq("user_id", user.id)
+    .eq("owner_id", user.id)
     .single();
 
   if (walletResult.error && walletResult.error.code !== "PGRST116") {
