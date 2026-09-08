@@ -717,7 +717,7 @@ async function wallet() {
     `
     : `
 
-            <section class="card">
+            <section class="wallet-finance-center">
 
               
 
@@ -746,8 +746,8 @@ async function wallet() {
               </div>
 
             </section>
-
-            <section class="card">
+            
+            <section class="wallet-sidebar">
 
             
 
