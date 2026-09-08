@@ -70,9 +70,7 @@ function auth(mode = "login") {
 
         <p class="muted">
           ${
-            mode === "login"
-              ? "Войдите в свою систему"
-              : "Создайте PRIDE ID и Wallet"
+            "Войдите в PRIDE"
           }
         </p>
 
@@ -114,18 +112,8 @@ function auth(mode = "login") {
           ${mode === "login" ? "Войти" : "Создать PRIDE ID"}
         </button>
 
-        <p class="small" style="margin-top:18px">
-          ${
-            mode === "login"
-              ? `Нет аккаунта?
-                 <button class="link-btn" onclick="auth('register')">
-                   Создать PRIDE ID
-                 </button>`
-              : `Уже есть аккаунт?
-                 <button class="link-btn" onclick="auth('login')">
-                   Войти
-                 </button>`
-          }
+        <p class="small muted" style="margin-top:18px">
+          Регистрация доступна только через кабинет Player.
         </p>
 
       </div>
