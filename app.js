@@ -907,6 +907,17 @@ async function player() {
         </p>
       </section>
 
+      <section class="card">
+  <div class="eyebrow">WALLET</div>
+
+  <button
+    class="btn primary"
+    onclick="walletRegister()"
+  >
+    СОЗДАТЬ WALLET
+  </button>
+</section>
+
     </main>
   `;
 }
@@ -988,16 +999,7 @@ async function admin() {
         </div>
 
       </section>
-      <section class="card">
-  <div class="eyebrow">WALLET</div>
-
-  <button
-    class="btn primary"
-    onclick="walletRegister()"
-  >
-    СОЗДАТЬ WALLET
-  </button>
-</section>
+      
     </main>
   `;
 }
