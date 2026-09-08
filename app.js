@@ -440,7 +440,154 @@ async function wallet() {
     </main>
   `;
 }
+async function walletData() {
+  if (!currentUser || !currentProfile) {
+    return auth("login");
+  }
 
+  const { data: authUser, error: authError } = await supabaseClient
+    .from("profiles")
+    .select("id, pride_id, full_name, role")
+    .eq("id", currentProfile.id)
+    .single();
+
+  if (authError) {
+    showError(authError);
+    return;
+  }
+
+  const { data: walletRecord, error: walletError } = await supabaseClient
+    .from("wallets")
+    .select("wallet_id")
+    .eq("owner_id", currentProfile.id)
+    .maybeSingle();
+
+  if (walletError) {
+    showError(walletError);
+    return;
+  }
+
+  const {
+    data: { user },
+    error: userError
+  } = await supabaseClient.auth.getUser();
+
+  if (userError) {
+    showError(userError);
+    return;
+  }
+
+  app.innerHTML = `
+    ${nav("wallet")}
+
+    <main class="page">
+
+      <section class="hero">
+        <div class="eyebrow">WALLET / ДАННЫЕ</div>
+
+        <h1>Личные данные</h1>
+
+        <p class="muted">
+          Здесь находятся данные владельца Wallet.
+        </p>
+      </section>
+
+      <section class="card">
+
+        <div class="data-row">
+          <span>ID</span>
+          <strong>${esc(authUser.pride_id || "—")}</strong>
+        </div>
+
+        <div class="data-row">
+          <span>WALLET</span>
+          <strong>${esc(walletRecord?.wallet_id || "—")}</strong>
+        </div>
+
+        <div class="data-row">
+          <span>ИМЯ</span>
+          <strong>${esc(authUser.full_name || "—")}</strong>
+        </div>
+
+        <div class="data-row">
+          <span>EMAIL</span>
+          <strong>${esc(user?.email || "—")}</strong>
+        </div>
+
+        <div class="data-row">
+          <span>ТЕЛЕФОН</span>
+          <strong>${esc(user?.phone || "Не указан")}</strong>
+        </div>
+
+      </section>
+
+      <section class="card">
+
+        <div class="eyebrow">ИЗМЕНЕНИЕ ДАННЫХ</div>
+
+        <label class="field">
+          <span>EMAIL</span>
+          <input
+            id="wallet-email"
+            type="email"
+            value="${esc(user?.email || "")}"
+            autocomplete="email"
+          >
+        </label>
+
+        <label class="field">
+          <span>ПОВТОР EMAIL</span>
+          <input
+            id="wallet-email-repeat"
+            type="email"
+            value="${esc(user?.email || "")}"
+            autocomplete="email"
+          >
+        </label>
+
+        <label class="field">
+          <span>ТЕЛЕФОН</span>
+          <input
+            id="wallet-phone"
+            type="tel"
+            value="${esc(user?.phone || "")}"
+            placeholder="+995 5XX XXX XXX"
+            autocomplete="tel"
+          >
+        </label>
+
+        <label class="field">
+          <span>ПОВТОР ТЕЛЕФОНА</span>
+          <input
+            id="wallet-phone-repeat"
+            type="tel"
+            value="${esc(user?.phone || "")}"
+            placeholder="+995 5XX XXX XXX"
+            autocomplete="tel"
+          >
+        </label>
+
+        <button
+          class="btn primary"
+          onclick="saveWalletData()"
+        >
+          СОХРАНИТЬ
+        </button>
+
+      </section>
+
+      <section class="card">
+        <button
+          class="btn"
+          onclick="wallet()"
+        >
+          ← НАЗАД В WALLET
+        </button>
+      </section>
+
+    </main>
+  `;
+}
 async function becomeSeller() {
   if (!currentUser) return;
 
