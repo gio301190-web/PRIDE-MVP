@@ -253,7 +253,6 @@ async function loadSession() {
 
   currentPlayer = playerResult.data || null;
 }
-
 async function wallet() {
   if (!currentUser || !currentProfile) {
     return auth("login");
