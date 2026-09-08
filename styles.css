@@ -92,3 +92,178 @@ button,input{font:inherit}button{cursor:pointer}.shell{min-height:100vh}.top{hei
     min-height: 50px;
   }
 }
+/* ===== PRIDE WALLET — CLEAN LAYOUT ===== */
+
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 38px 22px;
+}
+
+.page > .hero {
+  display: block;
+  margin: 0 0 34px;
+}
+
+.page > .hero .eyebrow,
+.page > .hero .muted {
+  display: none;
+}
+
+.page > .hero h1 {
+  font-size: 34px;
+  margin: 0;
+  font-weight: 900;
+}
+
+.page > .grid {
+  display: block;
+  margin: 0 0 34px;
+}
+
+.page > .grid > .card:first-child {
+  display: none;
+}
+
+.page > .grid > .card:last-child {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.page > .grid > .card:last-child .card-label {
+  font-size: 0;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.page > .grid > .card:last-child .card-label::after {
+  content: "PRD";
+  font-size: 12px;
+  letter-spacing: .16em;
+  font-weight: 800;
+}
+
+.page > .grid > .card:last-child .big-value {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+}
+
+/* Финансовый блок */
+
+.page > .card:nth-of-type(3) {
+  width: min(560px, 100%);
+  margin: 0 auto;
+  background: transparent;
+  border: 0;
+  padding: 20px 0;
+}
+
+.page > .card:nth-of-type(3) > .eyebrow {
+  display: none;
+}
+
+.wallet-finance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.wallet-finance-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.wallet-finance-row span {
+  font-size: 12px;
+  letter-spacing: .16em;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.wallet-finance-row strong {
+  font-size: 24px;
+  font-weight: 900;
+}
+
+/* Меню слева */
+
+.page > .card:nth-of-type(4) {
+  position: absolute;
+  left: max(22px, calc((100vw - 1180px) / 2));
+  top: 180px;
+  width: 230px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.page > .card:nth-of-type(4) > .eyebrow {
+  display: none;
+}
+
+.wallet-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wallet-menu .btn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.wallet-menu .btn:hover {
+  background: var(--panel2);
+  color: var(--text);
+}
+
+@media(max-width:800px) {
+
+  .page {
+    padding: 26px 16px;
+  }
+
+  .page > .hero {
+    margin-bottom: 26px;
+  }
+
+  .page > .hero h1 {
+    font-size: 30px;
+  }
+
+  .page > .card:nth-of-type(3) {
+    width: 100%;
+    padding: 12px 0 24px;
+  }
+
+  .page > .card:nth-of-type(4) {
+    position: static;
+    width: 100%;
+    margin: 0;
+  }
+
+  .wallet-menu .btn {
+    text-align: center;
+  }
+
+  .wallet-finance {
+    gap: 20px;
+  }
+
+  .wallet-finance-row strong {
+    font-size: 22px;
+  }
+}
