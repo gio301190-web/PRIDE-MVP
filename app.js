@@ -89,7 +89,7 @@ function auth(mode = "login") {
 
         <div class="field">
           <label>
-            ${isWalletLogin ? "ЛОГИН WALLET" : "Email"}
+            ${isWalletLogin ? "ЛОГИН" : "Email"}
           </label>
 
           <input
@@ -98,7 +98,7 @@ function auth(mode = "login") {
             placeholder="${
               isWalletLogin
                 ? "PRD-XXXXXXXX"
-                : "you@example.com"
+                :
             }"
           >
         </div>
