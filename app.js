@@ -259,7 +259,7 @@ async function wallet() {
     return auth("login");
   }
 
-  const { data: walletData, error } = await supabaseClient
+  const { data: walletRecord, error } = await supabaseClient
     .from("wallets")
     .select(`
       wallet_id,
@@ -279,7 +279,7 @@ async function wallet() {
     return;
   }
 
-  currentWallet = walletData || null;
+  currentWallet = walletRecord || null;
 
   const profileId = currentProfile.pride_id || currentProfile.prideId || "—";
   const walletId = currentWallet?.wallet_id || "—";
