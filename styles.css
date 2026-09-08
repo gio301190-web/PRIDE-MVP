@@ -417,3 +417,38 @@ button,input{font:inherit}button{cursor:pointer}.shell{min-height:100vh}.top{hei
   background: var(--panel2) !important;
   color: var(--text) !important;
 }
+/* ===== WALLET MOBILE FINAL ===== */
+
+@media (max-width: 800px) {
+
+  .wallet-sidebar {
+    position: absolute !important;
+    left: 12px !important;
+    top: 465px !important;
+    width: 135px !important;
+  }
+
+  .wallet-sidebar .btn {
+    width: 135px !important;
+    padding: 10px 8px !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+  }
+
+  .wallet-finance-center {
+    width: 205px !important;
+    margin-left: 155px !important;
+    margin-right: 10px !important;
+    gap: 24px !important;
+  }
+
+  .wallet-finance-row span {
+    font-size: 10px !important;
+  }
+
+  .wallet-finance-row strong {
+    font-size: 17px !important;
+    white-space: nowrap !important;
+  }
+
+}
