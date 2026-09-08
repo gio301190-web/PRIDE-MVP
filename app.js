@@ -132,7 +132,25 @@ function auth(mode = "login") {
             : ""
         }
 
-      
+      <button
+  class="btn primary"
+  onclick="${
+    mode === "login"
+      ? "login()"
+      : mode === "wallet"
+      ? "login()"
+      : "register()"
+  }"
+>
+  ${
+    isWalletLogin
+      ? "ВОЙТИ В WALLET"
+      : mode === "login"
+      ? "ВОЙТИ"
+      : "СОЗДАТЬ PRIDE ID"
+  }
+</button>
+
 ${
   mode === "login"
     ? `
@@ -146,6 +164,7 @@ ${
     `
     : ""
 }
+
 
         <p class="small muted" style="margin-top:18px">
           ${
