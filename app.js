@@ -340,13 +340,131 @@ async function submitWalletRegistration() {
       throw new Error("Не удалось создать Wallet.");
     }
 
-    alert(
-      "Wallet успешно создан.\n\n" +
-      "Номер Wallet будет назначен автоматически.\n" +
-      "Теперь можно войти в Wallet по email и паролю."
-    );
+    const { data: walletData, error: walletError } =
+      await supabaseClient
+        .from("wallets")
+        .select("wallet_id")
+        .eq("owner_id", data.user.id)
+        .single();
 
-    return auth("login");
+    if (walletError) {
+      throw walletError;
+    }
+
+    const walletId = walletData.wallet_id;
+
+    app.innerHTML = `
+      <main class="page">
+
+        <section class="card" style="
+          max-width:560px;
+          margin:80px auto;
+          text-align:center;
+        ">
+
+          <div class="eyebrow">
+            PRIDE WALLET
+          </div>
+
+          <h1 style="
+            font-size:32px;
+            margin:18px 0 10px;
+          ">
+            ПОЗДРАВЛЯЕМ!
+          </h1>
+
+          <p style="
+            font-size:18px;
+            font-weight:700;
+            margin-bottom:10px;
+          ">
+            Wallet успешно создан
+          </p>
+
+          <p class="muted" style="
+            margin-bottom:35px;
+          ">
+            Сохраните данные для входа.
+          </p>
+
+          <div style="
+            background:var(--panel2);
+            border-radius:14px;
+            padding:24px;
+            text-align:left;
+            margin-bottom:25px;
+          ">
+
+            <div style="
+              font-size:11px;
+              letter-spacing:.16em;
+              color:var(--muted);
+              font-weight:800;
+              margin-bottom:7px;
+            ">
+              ЛОГИН
+            </div>
+
+            <div style="
+              font-size:22px;
+              font-weight:900;
+              margin-bottom:22px;
+            ">
+              ${walletId}
+            </div>
+
+            <div style="
+              font-size:11px;
+              letter-spacing:.16em;
+              color:var(--muted);
+              font-weight:800;
+              margin-bottom:7px;
+            ">
+              ПАРОЛЬ
+            </div>
+
+            <div style="
+              font-size:22px;
+              font-weight:900;
+              word-break:break-all;
+            ">
+              ${pass}
+            </div>
+
+          </div>
+
+          <p class="muted" style="
+            font-size:13px;
+            line-height:1.5;
+            margin-bottom:25px;
+          ">
+            Сохраните логин и пароль.
+            Они понадобятся для входа в Wallet.
+          </p>
+
+          <button
+            class="btn primary"
+            style="width:100%;margin-bottom:10px;"
+            onclick="copyWalletCredentials(
+              '${walletId}',
+              '${pass.replace(/'/g, "\\'")}'
+            )"
+          >
+            СКОПИРОВАТЬ ДАННЫЕ
+          </button>
+
+          <button
+            class="btn"
+            style="width:100%;"
+            onclick="auth('login')"
+          >
+            ВОЙТИ В WALLET
+          </button>
+
+        </section>
+
+      </main>
+    `;
 
   } catch (error) {
     showError(error);
