@@ -165,7 +165,169 @@ async function register() {
     showError(error);
   }
 }
+async function walletRegister() {
+  app.innerHTML = `
+    ${nav("wallet")}
 
+    <main class="page">
+      <section class="hero">
+        <div class="eyebrow">PRIDE WALLET</div>
+        <h1>Регистрация Wallet</h1>
+        <p class="muted">
+          Создайте отдельный Wallet аккаунт.
+        </p>
+      </section>
+
+      <section class="card" style="max-width:560px;margin:0 auto;">
+
+        <div class="field">
+          <label>ИМЯ И ФАМИЛИЯ</label>
+          <input
+            id="wallet_name"
+            type="text"
+            placeholder="Имя Фамилия"
+          >
+        </div>
+
+        <div class="field">
+          <label>EMAIL</label>
+          <input
+            id="wallet_email"
+            type="email"
+            placeholder="email@example.com"
+          >
+        </div>
+
+        <div class="field">
+          <label>ТЕЛЕФОН</label>
+          <input
+            id="wallet_phone"
+            type="text"
+            placeholder="+995..."
+          >
+        </div>
+
+        <div class="field">
+          <label>СУММА КОНТРАКТА, PRD</label>
+          <input
+            id="wallet_contract"
+            type="number"
+            min="10000"
+            step="1"
+            placeholder="10000"
+          >
+        </div>
+
+        <div class="field">
+          <label>ПАРОЛЬ</label>
+          <input
+            id="wallet_pass"
+            type="password"
+            placeholder="Минимум 6 символов"
+          >
+        </div>
+
+        <div class="field">
+          <label>ПОВТОРИТЕ ПАРОЛЬ</label>
+          <input
+            id="wallet_pass2"
+            type="password"
+            placeholder="Повторите пароль"
+          >
+        </div>
+
+        <button
+          class="btn primary"
+          style="width:100%;margin-top:15px;"
+          onclick="submitWalletRegistration()"
+        >
+          СОЗДАТЬ WALLET
+        </button>
+
+        <button
+          class="btn"
+          style="width:100%;margin-top:8px;"
+          onclick="wallet()"
+        >
+          НАЗАД
+        </button>
+
+      </section>
+    </main>
+  `;
+}
+
+
+async function submitWalletRegistration() {
+  const name =
+    document.getElementById("wallet_name")?.value.trim();
+
+  const email =
+    document.getElementById("wallet_email")?.value.trim();
+
+  const phone =
+    document.getElementById("wallet_phone")?.value.trim();
+
+  const contract =
+    Number(document.getElementById("wallet_contract")?.value);
+
+  const pass =
+    document.getElementById("wallet_pass")?.value;
+
+  const pass2 =
+    document.getElementById("wallet_pass2")?.value;
+
+  if (!name || !email || !pass || !pass2) {
+    return alert("Заполните имя, email и пароль.");
+  }
+
+  if (pass.length < 6) {
+    return alert("Пароль должен содержать минимум 6 символов.");
+  }
+
+  if (pass !== pass2) {
+    return alert("Пароли не совпадают.");
+  }
+
+  if (!contract || contract < 10000) {
+    return alert("Минимальная сумма контракта — 10 000 PRD.");
+  }
+
+  try {
+    const { data, error } =
+      await supabaseClient.auth.signUp({
+        email,
+        password: pass,
+        options: {
+          data: {
+            full_name: name,
+            phone: phone || null,
+            account_type: "WALLET",
+            contract_amount: contract
+          }
+        }
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data?.user) {
+      throw new Error("Не удалось создать Wallet.");
+    }
+
+    alert(
+      "Wallet успешно создан.\n\n" +
+      "Номер Wallet будет назначен автоматически.\n" +
+      "Теперь можно войти в Wallet по email и паролю."
+    );
+
+    return auth("login");
+
+  } catch (error) {
+    showError(error);
+  }
+}
 async function login() {
   const email = document.getElementById("email")?.value.trim();
   const pass = document.getElementById("pass")?.value;
