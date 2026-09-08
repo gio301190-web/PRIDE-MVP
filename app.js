@@ -258,6 +258,30 @@ async function walletRegister() {
 }
 
 
+
+async function login() {
+  const email = document.getElementById("email")?.value.trim();
+  const pass = document.getElementById("pass")?.value;
+
+  if (!email || !pass) {
+    return alert("Введите email и пароль.");
+  }
+
+  try {
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password: pass
+    });
+
+    if (error) throw error;
+
+    await loadSession();
+    wallet();
+
+  } catch (error) {
+    showError(error);
+  }
+}
 async function submitWalletRegistration() {
   const name =
     document.getElementById("wallet_name")?.value.trim();
@@ -328,30 +352,23 @@ async function submitWalletRegistration() {
     showError(error);
   }
 }
-async function login() {
-  const email = document.getElementById("email")?.value.trim();
-  const pass = document.getElementById("pass")?.value;
+function copyWalletCredentials(walletId, password) {
+  const text =
+    "PRIDE WALLET\n\n" +
+    "Логин: " + walletId + "\n" +
+    "Пароль: " + password;
 
-  if (!email || !pass) {
-    return alert("Введите email и пароль.");
-  }
-
-  try {
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password: pass
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      alert("Данные для входа скопированы.");
+    })
+    .catch(() => {
+      alert(
+        "Не удалось автоматически скопировать данные.\n\n" +
+        text
+      );
     });
-
-    if (error) throw error;
-
-    await loadSession();
-    wallet();
-
-  } catch (error) {
-    showError(error);
-  }
 }
-
 async function logout() {
   await supabaseClient.auth.signOut();
 
