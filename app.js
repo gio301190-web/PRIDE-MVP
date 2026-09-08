@@ -98,7 +98,7 @@ function auth(mode = "login") {
             placeholder="${
               isWalletLogin
                 ? "PRD-XXXXXXXX"
-                :
+                : "you@example.com"
             }"
           >
         </div>
