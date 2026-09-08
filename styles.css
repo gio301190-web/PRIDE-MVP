@@ -424,7 +424,7 @@ button,input{font:inherit}button{cursor:pointer}.shell{min-height:100vh}.top{hei
   .wallet-sidebar {
   position: absolute !important;
   left: 18px !important;
-  top: 240px !important;
+  top: 230px !important;
   width: 150px !important;
 }
 
