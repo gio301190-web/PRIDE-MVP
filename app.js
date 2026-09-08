@@ -60,18 +60,20 @@ function nav(active = "wallet") {
 }
 
 function auth(mode = "login") {
+  const isWalletLogin = mode === "wallet";
+
   app.innerHTML = `
     <main class="auth-page">
       <div class="auth-card">
 
-        <div class="eyebrow">PRIDE ECOSYSTEM</div>
+        <div class="eyebrow">
+          ${isWalletLogin ? "PRIDE WALLET" : "PRIDE ECOSYSTEM"}
+        </div>
 
         <h1>PRIDE</h1>
 
         <p class="muted">
-          ${
-            "Войдите в PRIDE"
-          }
+          ${isWalletLogin ? "Войдите в свой Wallet" : "Войдите в PRIDE"}
         </p>
 
         ${
@@ -86,34 +88,75 @@ function auth(mode = "login") {
         }
 
         <div class="field">
-          <label>Email</label>
-          <input id="email" type="email" placeholder="you@example.com">
+          <label>
+            ${isWalletLogin ? "ЛОГИН WALLET" : "Email"}
+          </label>
+
+          <input
+            id="email"
+            type="${isWalletLogin ? "text" : "email"}"
+            placeholder="${
+              isWalletLogin
+                ? "PRD-XXXXXXXX"
+                : "you@example.com"
+            }"
+          >
         </div>
 
         <div class="field">
           <label>Пароль</label>
-          <input id="pass" type="password" placeholder="Минимум 6 символов">
+
+          <input
+            id="pass"
+            type="password"
+            placeholder="Минимум 6 символов"
+          >
         </div>
 
         ${
           mode === "register"
             ? `
               <div class="field">
-                <label>Sponsor PRIDE ID <span class="muted">(необязательно)</span></label>
-                <input id="sponsor" type="text" placeholder="PRIDE-XXXXXXXX">
+                <label>
+                  Sponsor PRIDE ID
+                  <span class="muted">(необязательно)</span>
+                </label>
+
+                <input
+                  id="sponsor"
+                  type="text"
+                  placeholder="PRIDE-XXXXXXXX"
+                >
               </div>
             `
             : ""
         }
 
-        <button class="btn primary" onclick="${
-          mode === "login" ? "login()" : "register()"
-        }">
-          ${mode === "login" ? "Войти" : "Создать PRIDE ID"}
+        <button
+          class="btn primary"
+          onclick="${
+            mode === "login"
+              ? "login()"
+              : mode === "wallet"
+              ? "login()"
+              : "register()"
+          }"
+        >
+          ${
+            isWalletLogin
+              ? "ВОЙТИ В WALLET"
+              : mode === "login"
+              ? "Войти"
+              : "Создать PRIDE ID"
+          }
         </button>
 
         <p class="small muted" style="margin-top:18px">
-          Регистрация доступна только через кабинет Player.
+          ${
+            isWalletLogin
+              ? "Используйте номер Wallet и пароль, полученные при регистрации."
+              : "Регистрация доступна только через кабинет Player."
+          }
         </p>
 
       </div>
@@ -260,22 +303,54 @@ async function walletRegister() {
 
 
 async function login() {
-  const email = document.getElementById("email")?.value.trim();
-  const pass = document.getElementById("pass")?.value;
+  const loginValue =
+    document.getElementById("email")?.value.trim();
 
-  if (!email || !pass) {
-    return alert("Введите email и пароль.");
+  const pass =
+    document.getElementById("pass")?.value;
+
+  if (!loginValue || !pass) {
+    return alert("Введите логин и пароль.");
   }
 
   try {
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password: pass
-    });
+    let email = loginValue;
 
-    if (error) throw error;
+    const isWalletLogin =
+      loginValue.toUpperCase().startsWith("PRD-");
+
+    if (isWalletLogin) {
+      const { data, error } =
+        await supabaseClient.rpc(
+          "get_wallet_login_email",
+          {
+            p_wallet_id: loginValue
+          }
+        );
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data) {
+        return alert("Wallet с таким номером не найден.");
+      }
+
+      email = data;
+    }
+
+    const { error } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password: pass
+      });
+
+    if (error) {
+      throw error;
+    }
 
     await loadSession();
+
     wallet();
 
   } catch (error) {
