@@ -422,18 +422,19 @@ button,input{font:inherit}button{cursor:pointer}.shell{min-height:100vh}.top{hei
 @media (max-width: 800px) {
 
   .wallet-sidebar {
-    position: absolute !important;
-    left: 12px !important;
-    top: 465px !important;
-    width: 135px !important;
-  }
+  position: absolute !important;
+  left: 18px !important;
+  top: 120px !important;
+  width: 150px !important;
+}
 
   .wallet-sidebar .btn {
-    width: 135px !important;
-    padding: 10px 8px !important;
-    font-size: 11px !important;
-    line-height: 1.25 !important;
-  }
+  width: 150px !important;
+  padding: 10px 8px !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
 
   .wallet-finance-center {
     width: 205px !important;
