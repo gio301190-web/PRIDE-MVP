@@ -717,7 +717,6 @@ async function wallet() {
     `
     : `
 
-      `
             <section class="card">
 
               
