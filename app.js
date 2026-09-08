@@ -440,76 +440,167 @@ async function wallet() {
     </main>
   `;
 }
-async function saveWalletData() {
+async function walletData() {
   if (!currentUser || !currentProfile) {
     return auth("login");
   }
 
-  const email = document
-    .getElementById("wallet-email")
-    ?.value
-    .trim();
+  const { data: profile, error: profileError } = await supabaseClient
+    .from("profiles")
+    .select("id, pride_id, full_name, role")
+    .eq("id", currentProfile.id)
+    .single();
 
-  const emailRepeat = document
-    .getElementById("wallet-email-repeat")
-    ?.value
-    .trim();
-
-  const phone = document
-    .getElementById("wallet-phone")
-    ?.value
-    .trim();
-
-  const phoneRepeat = document
-    .getElementById("wallet-phone-repeat")
-    ?.value
-    .trim();
-
-  if (!email || !emailRepeat) {
-    return alert("Укажите email.");
+  if (profileError) {
+    showError(profileError);
+    return;
   }
 
-  if (email !== emailRepeat) {
-    return alert("Email не совпадает.");
+  const { data: walletRecord, error: walletError } = await supabaseClient
+    .from("wallets")
+    .select(`
+      wallet_id,
+      status,
+      prd_balance,
+      contract_amount,
+      loan_amount,
+      collateral_amount,
+      free_balance
+    `)
+    .eq("owner_id", currentProfile.id)
+    .maybeSingle();
+
+  if (walletError) {
+    showError(walletError);
+    return;
   }
 
-  if (phone !== phoneRepeat) {
-    return alert("Телефон не совпадает.");
-  }
+  currentWallet = walletRecord || null;
 
-  try {
-    // Сохраняем email через Supabase Auth
-    const { error: authError } =
-      await supabaseClient.auth.updateUser({
-        email: email
-      });
+  const walletId = currentWallet?.wallet_id || "—";
+  const balance = Number(currentWallet?.prd_balance || 0);
+  const contract = Number(currentWallet?.contract_amount || 0);
+  const loan = Number(currentWallet?.loan_amount || 0);
+  const freeBalance = Number(currentWallet?.free_balance || 0);
 
-    if (authError) {
-      throw authError;
-    }
+  app.innerHTML = `
+    ${nav("wallet")}
 
-    // Телефон сохраняем как контактный реквизит профиля.
-    // SMS-провайдер для этого не требуется.
-    const { error: profileError } =
-      await supabaseClient
-        .from("profiles")
-        .update({
-          phone: phone || null
-        })
-        .eq("id", currentProfile.id);
+    <main class="page">
 
-    if (profileError) {
-      throw profileError;
-    }
+      <section class="hero">
+        <div class="eyebrow">WALLET / ДАННЫЕ</div>
 
-    alert("Данные сохранены.");
+        <h1>Личные данные</h1>
 
-    await loadSession();
-    await walletData();
+        <p class="muted">
+          Здесь находятся данные владельца Wallet.
+        </p>
+      </section>
 
-  } catch (error) {
-    showError(error);
-  }
+      <section class="card">
+        <div class="wallet-data-list">
+
+          <div>
+            ID
+            <strong>${esc(profile?.pride_id || "—")}</strong>
+          </div>
+
+          <div>
+            WALLET
+            <strong>${esc(walletId)}</strong>
+          </div>
+
+          <div>
+            ИМЯ
+            <strong>${esc(profile?.full_name || "—")}</strong>
+          </div>
+
+          <div>
+            EMAIL
+            <strong>${esc(currentUser.email || "—")}</strong>
+          </div>
+
+          <div>
+            ТЕЛЕФОН
+            <strong>${esc(currentProfile.phone || "Не указан")}</strong>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="card">
+
+        <div class="eyebrow">ИЗМЕНЕНИЕ ДАННЫХ</div>
+
+        <label>
+          EMAIL
+
+          <input
+            id="wallet-email"
+            type="email"
+            value="${esc(currentUser.email || "")}"
+            autocomplete="email"
+          >
+        </label>
+
+        <label>
+          ПОВТОР EMAIL
+
+          <input
+            id="wallet-email-repeat"
+            type="email"
+            value="${esc(currentUser.email || "")}"
+            autocomplete="email"
+          >
+        </label>
+
+        <label>
+          ТЕЛЕФОН
+
+          <input
+            id="wallet-phone"
+            type="tel"
+            value="${esc(currentProfile.phone || "")}"
+            placeholder="+995 5XX XXX XXX"
+            autocomplete="tel"
+          >
+        </label>
+
+        <label>
+          ПОВТОР ТЕЛЕФОНА
+
+          <input
+            id="wallet-phone-repeat"
+            type="tel"
+            value="${esc(currentProfile.phone || "")}"
+            placeholder="+995 5XX XXX XXX"
+            autocomplete="tel"
+          >
+        </label>
+
+        <button
+          class="btn primary"
+          onclick="saveWalletData()"
+        >
+          СОХРАНИТЬ
+        </button>
+
+      </section>
+
+      <section class="card">
+
+        <button
+          class="btn"
+          onclick="wallet()"
+        >
+          ← НАЗАД В WALLET
+        </button>
+
+      </section>
+
+    </main>
+  `;
 }
 async function saveWalletData() {
   if (!currentUser || !currentProfile) {
