@@ -627,7 +627,7 @@ async function loadSession() {
 }
 async function wallet() {
   if (!currentUser || !currentProfile) {
-    return auth("login");
+    return auth("wallet");
   }
 
   const { data: walletRecord, error } = await supabaseClient
