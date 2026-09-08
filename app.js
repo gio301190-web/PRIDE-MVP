@@ -689,58 +689,38 @@ async function wallet() {
 
     <main class="page">
 
-      <section class="hero">
-        <div class="eyebrow">PRIDE WALLET</div>
+      <section class="wallet-header">
+  <div class="wallet-name">
+    ${esc(currentProfile.full_name || "Участник")}
+  </div>
 
-        <h1>
-          Добро пожаловать,<br>
-          ${esc(currentProfile.full_name || "Участник")}
-        </h1>
-
-        <p class="muted">
-          Ваш личный Wallet.
-        </p>
-      </section>
-
-      <section class="grid">
-
-        <div class="card">
-          <div class="card-label">ID</div>
-          <div class="big-value">${esc(profileId)}</div>
-        </div>
-
-        <div class="card">
-          <div class="card-label">WALLET</div>
-          <div class="big-value">${esc(walletId)}</div>
-        </div>
-
-      </section>
+  <div class="wallet-number">
+    ${esc(walletId)}
+  </div>
+</section>
 
       ${
-        !isActive
-          ? `
-            <section class="card wallet-inactive">
-              <div class="eyebrow">СТАТУС</div>
-              <h2>КАБИНЕТ НЕАКТИВЕН</h2>
+  !isActive
+    ? `
+      <section class="wallet-inactive">
+        <h2>КАБИНЕТ НЕАКТИВЕН</h2>
 
-              <p class="muted">
-                Контракт ещё не активирован.
-              </p>
+        <p class="muted">
+          Для активации внесите средства на Wallet.
+        </p>
 
-              <div class="wallet-menu">
-                <button
-                  class="btn primary"
-                  onclick="activateWallet()"
-                >
-                  АКТИВАЦИЯ КОНТРАКТА
-                </button>
-              </div>
-            </section>
-          `
-          : `
+        <p class="muted">
+          При первом пополнении автоматически удерживаются
+          100 PRD за активацию и 7% комиссии по контракту.
+        </p>
+      </section>
+    `
+    : `
+
+      `
             <section class="card">
 
-              <div class="eyebrow">WALLET</div>
+              
 
               <div class="wallet-finance">
 
@@ -770,7 +750,7 @@ async function wallet() {
 
             <section class="card">
 
-              <div class="eyebrow">WALLET</div>
+            
 
               <div class="wallet-menu">
 
