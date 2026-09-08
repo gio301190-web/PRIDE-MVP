@@ -588,6 +588,71 @@ async function walletData() {
     </main>
   `;
 }
+async function saveWalletData() {
+  if (!currentUser || !currentProfile) {
+    return auth("login");
+  }
+
+  const email = document
+    .getElementById("wallet-email")
+    ?.value
+    .trim();
+
+  const emailRepeat = document
+    .getElementById("wallet-email-repeat")
+    ?.value
+    .trim();
+
+  const phone = document
+    .getElementById("wallet-phone")
+    ?.value
+    .trim();
+
+  const phoneRepeat = document
+    .getElementById("wallet-phone-repeat")
+    ?.value
+    .trim();
+
+  if (!email || !emailRepeat) {
+    return alert("Укажите email.");
+  }
+
+  if (email !== emailRepeat) {
+    return alert("Email не совпадает.");
+  }
+
+  if (phone !== phoneRepeat) {
+    return alert("Телефон не совпадает.");
+  }
+
+  try {
+    const updates = {};
+
+    if (email) {
+      updates.email = email;
+    }
+
+    if (phone) {
+      updates.phone = phone;
+    }
+
+    const { error } = await supabaseClient.auth.updateUser(updates);
+
+    if (error) {
+      throw error;
+    }
+
+    alert(
+      "Данные сохранены. Если Supabase потребует подтверждение нового email или телефона, проверьте соответствующее сообщение."
+    );
+
+    await loadSession();
+    await walletData();
+
+  } catch (error) {
+    showError(error);
+  }
+}
 async function becomeSeller() {
   if (!currentUser) return;
 
