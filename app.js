@@ -254,22 +254,49 @@ async function loadSession() {
   currentPlayer = playerResult.data || null;
 }
 
-function wallet() {
+async function wallet() {
   if (!currentUser || !currentProfile) {
     return auth("login");
   }
 
-  const prideId =
-    currentProfile.pride_id ||
-    currentProfile.prideId ||
-    "—";
+  const { data: walletData, error } = await supabaseClient
+    .from("wallets")
+    .select(`
+      wallet_id,
+      status,
+      prd_balance,
+      contract_amount,
+      loan_amount,
+      collateral_amount,
+      free_balance,
+      is_founder_wallet
+    `)
+    .eq("owner_id", currentProfile.id)
+    .maybeSingle();
 
-  const walletId =
-    currentWallet?.wallet_id ||
-    currentWallet?.id ||
-    "—";
+  if (error) {
+    showError(error);
+    return;
+  }
 
-  const role = currentProfile.role || "WALLET_USER";
+  currentWallet = walletData || null;
+
+  const profileId = currentProfile.pride_id || currentProfile.prideId || "—";
+  const walletId = currentWallet?.wallet_id || "—";
+  const status = currentWallet?.status || "INACTIVE";
+
+  const contract = Number(currentWallet?.contract_amount || 0);
+  const balance = Number(currentWallet?.prd_balance || 0);
+  const loan = Number(currentWallet?.loan_amount || 0);
+  const freeBalance = Number(currentWallet?.free_balance || 0);
+  const isFounderWallet = currentWallet?.is_founder_wallet === true;
+
+  const money = (value) =>
+    new Intl.NumberFormat("ru-RU", {
+      maximumFractionDigits: 2
+    }).format(value) + " PRD";
+
+  const isActive = status === "ACTIVE";
 
   app.innerHTML = `
     ${nav("wallet")}
@@ -279,14 +306,13 @@ function wallet() {
       <section class="hero">
         <div class="eyebrow">PRIDE WALLET</div>
 
-        <h1>Добро пожаловать,<br>${esc(
-          currentProfile.full_name ||
-          currentUser.user_metadata?.full_name ||
-          "Участник"
-        )}</h1>
+        <h1>
+          Добро пожаловать,<br>
+          ${esc(currentProfile.full_name || "Участник")}
+        </h1>
 
         <p class="muted">
-          Здесь фиксируется твой результат.
+          Ваш личный Wallet.
         </p>
       </section>
 
@@ -294,7 +320,7 @@ function wallet() {
 
         <div class="card">
           <div class="card-label">ID</div>
-          <div class="big-value">${esc(prideId)}</div>
+          <div class="big-value">${esc(profileId)}</div>
         </div>
 
         <div class="card">
@@ -302,51 +328,113 @@ function wallet() {
           <div class="big-value">${esc(walletId)}</div>
         </div>
 
-        <div class="card">
-
-        <div class="card">
-          <div class="card-label">STATUS</div>
-          <div class="big-value">
-            ${esc(currentWallet?.status || "ACTIVE")}
-          </div>
-        </div>
-
       </section>
 
       ${
-        role === "WALLET_USER"
+        !isActive
           ? `
-            <section class="card">
-              <div class="eyebrow">NEXT STEP</div>
-              <h2>Стать Player</h2>
+            <section class="card wallet-inactive">
+              <div class="eyebrow">СТАТУС</div>
+              <h2>КАБИНЕТ НЕАКТИВЕН</h2>
+
               <p class="muted">
-                Player получает доступ к игровой системе PRIDE.
+                Контракт ещё не активирован.
               </p>
 
-              <button class="btn primary" onclick="becomeSeller()">
-                Активировать Player
-              </button>
+              <div class="wallet-menu">
+                <button
+                  class="btn primary"
+                  onclick="activateWallet()"
+                >
+                  АКТИВАЦИЯ КОНТРАКТА
+                </button>
+              </div>
             </section>
           `
-          : ""
-      }
-
-      ${
-        role === "SELLER" || role === "FOUNDER"
-          ? `
+          : `
             <section class="card">
-              <div class="eyebrow">PRIDE PLAYER</div>
-              <h2>Игровой кабинет доступен</h2>
-              <p class="muted">
-                Твой PRIDE ID связан с PlayerProfile.
-              </p>
 
-              <button class="btn primary" onclick="player()">
-                Открыть Player
-              </button>
+              <div class="eyebrow">WALLET</div>
+
+              <div class="wallet-finance">
+
+                <div class="wallet-finance-row">
+                  <span>КОНТРАКТ</span>
+                  <strong>${money(contract)}</strong>
+                </div>
+
+                <div class="wallet-finance-row">
+                  <span>БАЛАНС</span>
+                  <strong>${money(balance)}</strong>
+                </div>
+
+                <div class="wallet-finance-row">
+                  <span>ЗАЙМ</span>
+                  <strong>${money(loan)}</strong>
+                </div>
+
+                <div class="wallet-finance-row">
+                  <span>ОСТАТОК</span>
+                  <strong>${money(freeBalance)}</strong>
+                </div>
+
+              </div>
+
             </section>
+
+            <section class="card">
+
+              <div class="eyebrow">WALLET</div>
+
+              <div class="wallet-menu">
+
+                <button class="btn" onclick="walletData()">
+                  ДАННЫЕ
+                </button>
+
+                <button class="btn" onclick="walletTransactions()">
+                  ИСТОРИЯ ТРАНЗАКЦИЙ
+                </button>
+
+                <button class="btn" onclick="walletTransfer()">
+                  ВНУТРЕННИЙ ПЕРЕВОД
+                </button>
+
+                <button class="btn" onclick="walletLoan()">
+                  ЗАЙМ
+                </button>
+
+                <button class="btn" onclick="walletProfitability()">
+                  ДОХОДНОСТЬ
+                </button>
+
+                <button class="btn" onclick="walletDocuments()">
+                  ДОКУМЕНТЫ
+                </button>
+
+                <button class="btn" onclick="walletSecurity()">
+                  БЕЗОПАСНОСТЬ
+                </button>
+
+              </div>
+
+            </section>
+
+            ${
+              isFounderWallet
+                ? `
+                  <section class="card">
+                    <div class="eyebrow">FOUNDER</div>
+                    <h2>Founder Wallet</h2>
+                    <p class="muted">
+                      Специальный Founder Wallet.
+                      Расчёт Units к данному Wallet не применяется.
+                    </p>
+                  </section>
+                `
+                : ""
+            }
           `
-          : ""
       }
 
     </main>
