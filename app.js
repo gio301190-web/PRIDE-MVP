@@ -785,20 +785,7 @@ async function wallet() {
 
             </section>
 
-            ${
-              isFounderWallet
-                ? `
-                  <section class="card">
-                    <div class="eyebrow">FOUNDER</div>
-                    <h2>Founder Wallet</h2>
-                    <p class="muted">
-                      Специальный Founder Wallet.
-                      Расчёт Units к данному Wallet не применяется.
-                    </p>
-                  </section>
-                `
-                : ""
-            }
+            
           `
       }
 
