@@ -270,7 +270,7 @@ button,input{font:inherit}button{cursor:pointer}.shell{min-height:100vh}.top{hei
 /* ===== FINAL WALLET LAYOUT ===== */
 
 .wallet-header {
-  text-align: center;
+  text-align: left;
   margin: 35px 0 55px;
 }
 
@@ -420,7 +420,11 @@ button,input{font:inherit}button{cursor:pointer}.shell{min-height:100vh}.top{hei
 /* ===== WALLET MOBILE FINAL ===== */
 
 @media (max-width: 800px) {
-
+  .wallet-header {
+  text-align: left !important;
+  margin-left: 18px !important;
+  width: 150px !important;
+}
   .wallet-sidebar {
   position: absolute !important;
   left: 18px !important;
